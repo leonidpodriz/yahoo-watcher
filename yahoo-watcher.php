@@ -105,8 +105,8 @@ function updateYahooPosts()
     $finance_post_creator = new FinanceRSSParser;
     $finance_post_creator -> createNewPosts();
 
-//    $entertainment_post_creator = new EntertainmentRSSParser;
-//    $entertainment_post_creator -> createNewPosts();
+    $entertainment_post_creator = new EntertainmentRSSParser;
+    $entertainment_post_creator -> createNewPosts();
 
     wp_schedule_single_event(time() + 7200, 'update_yahoo_action_hook');
 }
