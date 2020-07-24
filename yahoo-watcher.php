@@ -10,19 +10,6 @@ Author URI: https://leonidpodriz.github.io/
 
 require "posts_creator.php";
 
-
-class FinanceRSSParser extends RSSWordPressPostsCreator
-{
-    public $post_type = "finance";
-    public $rss_url = "https://finance.yahoo.com/rss/";
-}
-
-class EntertainmentRSSParser extends RSSWordPressPostsCreator
-{
-    public $post_type = "entertainment";
-    public $rss_url = "https://news.yahoo.com/rss/entertainment";
-}
-
 function yahoo_watcher_setup()
 {
     register_post_type('finance', array(

@@ -86,3 +86,15 @@ class RSSWordPressPostsCreator extends BaseRSSParser
         }
     }
 }
+
+class FinanceRSSParser extends RSSWordPressPostsCreator
+{
+    public $post_type = "finance";
+    public $rss_url = "https://finance.yahoo.com/rss/";
+}
+
+class EntertainmentRSSParser extends RSSWordPressPostsCreator
+{
+    public $post_type = "entertainment";
+    public $rss_url = "https://news.yahoo.com/rss/entertainment";
+}
