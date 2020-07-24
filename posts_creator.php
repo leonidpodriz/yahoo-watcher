@@ -44,17 +44,18 @@ class RSSWordPressPostsCreator extends BaseRSSParser
         );
     }
 
-    private function publish_post_if_need($wp_post)
+    private function publish_post_if_need($rss_posts)
     {
         $found_post = null;
 
         if ($posts = get_posts(array(
-            'post_title' => $wp_post->post_title,
+            'post_title' => $rss_posts->title -> __toString(),
             'post_type' => $this->post_type,
             'posts_per_page' => 1,
         ))) $found_post = $posts[0];
 
-        if ( !is_null($found_post)) {
+        if (!is_null($found_post)) {
+            $wp_post = $this->convert_post_data($rss_posts);
             wp_insert_post($wp_post);
         }
     }
@@ -62,7 +63,6 @@ class RSSWordPressPostsCreator extends BaseRSSParser
     public function createNewPosts()
     {
         $rss_posts = $this->get_rss_posts();
-        $wp_posts = array_map(array($this, "convert_post_data"), $rss_posts);
-        array_map(array($this, "publish_post_if_need"), $wp_posts);
+        array_map(array($this, "publish_post_if_need"), $rss_posts);
     }
 }
