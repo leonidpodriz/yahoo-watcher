@@ -35,7 +35,8 @@ class BaseRSSParser
         foreach ($rss_posts as $rss_post) {
             array_push($posts, $rss_post);
         }
-        return array_map(array($this, "_process_item"), $posts);
+        // return array_map(array($this, "_process_item"), $posts);
+        return $posts;
     }
 }
 
@@ -63,7 +64,7 @@ class RSSWordPressPostsCreator extends BaseRSSParser
             'posts_per_page' => 1,
         ) ) ) $found_post = $posts[0];
 
-        if ( !is_null( $found_post ) ){
+        if ( is_null( $found_post ) ){
             wp_insert_post($wp_post);
         }
     }
@@ -75,17 +76,3 @@ class RSSWordPressPostsCreator extends BaseRSSParser
         array_map(array($this, "publish_post_if_need"), $wp_posts);
     }
 }
-
-class FinanceRSSParser extends RSSWordPressPostsCreator
-{
-    public $rss_url = "https://finance.yahoo.com/rss/";
-}
-
-class EntertainmentRSSParser extends BaseRSSParser
-{
-    public $rss_url = "https://news.yahoo.com/rss/entertainment";
-}
-
-$parser = new FinanceRSSParser;
-$posts = $parser -> get_rss_posts();
-print_r($posts);

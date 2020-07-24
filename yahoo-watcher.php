@@ -8,7 +8,21 @@ Author: leonidpodriz
 Author URI: https://leonidpodriz.github.io/
 */
 
-require "main.php";
+require "posts_creator.php";
+
+
+
+class FinanceRSSParser extends RSSWordPressPostsCreator
+{
+    public $post_type = "finance";
+    public $rss_url = "https://finance.yahoo.com/rss/";
+}
+
+class EntertainmentRSSParser extends RSSWordPressPostsCreator
+{
+    public $post_type = "entertainment";
+    public $rss_url = "https://news.yahoo.com/rss/entertainment";
+}
 
 function yahoo_watcher_setup()
 {
@@ -81,17 +95,20 @@ function yahoo_watcher_activate()
     yahoo_watcher_setup();
     flush_rewrite_rules();
 
-    wp_schedule_single_event( time() + 10, 'update_yahoo_action_hook' );
+    updateYahooPosts();
 }
 
 add_action( 'update_yahoo_action_hook', 'updateYahooPosts' );
 
 function updateYahooPosts() {
 
-    $post_creator = new FinanceRSSParser;
-    $post_creator -> createNewPosts();
+    $finance_post_creator = new FinanceRSSParser;
+    $finance_post_creator -> createNewPosts();
 
-    wp_schedule_single_event( time() + 10, 'update_yahoo_action_hook' );
+    $entertainment_post_creator = new EntertainmentRSSParser;
+    $entertainment_post_creator -> createNewPosts();
+
+    wp_schedule_single_event( time() + 7200, 'update_yahoo_action_hook' );
 }
 
 register_activation_hook(__FILE__, 'yahoo_watcher_activate');
