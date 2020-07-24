@@ -1,10 +1,12 @@
 <?php
 
+require "wp-upload-image-from-url.php";
+
 class BaseRSSParser
 {
     public $rss_url = "https://rss.url/";
 
-    private function get_xml_data($link)
+    public function get_xml_data($link)
     {
         return simplexml_load_file($link);
     }
@@ -25,13 +27,15 @@ class BaseRSSParser
             array_push($posts, $rss_post);
         }
 
-        return $this -> xmlToArray($posts);
+        return $this->xmlToArray($posts);
     }
 }
 
 class RSSWordPressPostsCreator extends BaseRSSParser
 {
     public $post_type = "post";
+    public $max_post_pre_once = 1;
+    private $posts;
 
     private function convert_post_data($post_data)
     {
@@ -44,27 +48,38 @@ class RSSWordPressPostsCreator extends BaseRSSParser
         );
     }
 
+    private function is_not_published($new_post)
+    {
+        // Not the best choice, need to be changed
+        foreach ($this->posts as $post) {
+            if ($post->post_title == $new_post['title']) return false;
+        }
+        return true;
+    }
+
+    private function remove_published_posts($rss_post)
+    {
+        return array_filter($rss_post, array($this, "is_not_published"));
+    }
+
     private function publish_post_if_need($rss_post)
     {
-        $posts = get_posts(array(
-            'post_title' => $rss_post["title"],
-            'post_type' => $this->post_type,
-            'post_status' => 'publish',
-            'posts_per_page' => 1,
-        ));
-
-        // Not the best choice, need to be changed
-        foreach ($posts as $post) {
-            if ($post->post_title == $rss_post['title']) return;
-        }
-
         $wp_post = $this->convert_post_data($rss_post);
         wp_insert_post($wp_post);
     }
 
     public function createNewPosts()
     {
+        $this->posts = get_posts(array(
+            'post_type' => $this->post_type,
+            'post_status' => 'publish',
+            'posts_per_page' => 1,
+        ));
+
         $rss_posts = $this->get_rss_posts();
-        array_map(array($this, "publish_post_if_need"), $rss_posts);
+        $posts = $this->remove_published_posts($rss_posts);
+        foreach (array_slice($posts, 1, $this->max_post_pre_once) as $post) {
+            $this->publish_post_if_need($post);
+        }
     }
 }

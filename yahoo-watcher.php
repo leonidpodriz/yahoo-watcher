@@ -11,7 +11,6 @@ Author URI: https://leonidpodriz.github.io/
 require "posts_creator.php";
 
 
-
 class FinanceRSSParser extends RSSWordPressPostsCreator
 {
     public $post_type = "finance";
@@ -98,17 +97,18 @@ function yahoo_watcher_activate()
     updateYahooPosts();
 }
 
-add_action( 'update_yahoo_action_hook', 'updateYahooPosts' );
+add_action('update_yahoo_action_hook', 'updateYahooPosts');
 
-function updateYahooPosts() {
+function updateYahooPosts()
+{
 
     $finance_post_creator = new FinanceRSSParser;
     $finance_post_creator -> createNewPosts();
 
-    $entertainment_post_creator = new EntertainmentRSSParser;
-    $entertainment_post_creator -> createNewPosts();
+//    $entertainment_post_creator = new EntertainmentRSSParser;
+//    $entertainment_post_creator -> createNewPosts();
 
-    wp_schedule_single_event( time() + 7200, 'update_yahoo_action_hook' );
+    wp_schedule_single_event(time() + 7200, 'update_yahoo_action_hook');
 }
 
 register_activation_hook(__FILE__, 'yahoo_watcher_activate');
