@@ -39,7 +39,7 @@ function yahoo_watcher_setup()
         'rewrite' => array('slug' => 'finance/%finance%', 'with_front' => false, 'pages' => false, 'feeds' => false, 'feed' => false),
         'has_archive' => 'finances',
         'query_var' => true,
-        'supports' => array('title', 'editor')
+        'supports' => array('title', 'editor', 'thumbnail')
     ));
 
     register_post_type('entertainment', array(
@@ -69,7 +69,7 @@ function yahoo_watcher_setup()
         'rewrite' => array('slug' => 'entertainment/%entertainment%', 'with_front' => false, 'pages' => false, 'feeds' => false, 'feed' => false),
         'has_archive' => 'entertainment',
         'query_var' => true,
-        'supports' => array('title', 'editor')
+        'supports' => array('title', 'editor', 'thumbnail')
     ));
 
 }

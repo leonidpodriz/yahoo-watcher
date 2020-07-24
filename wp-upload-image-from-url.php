@@ -95,6 +95,7 @@ function ksa_upload_from_url($image_url, $attach_to_post = 0, $add_to_media = tr
         );
 
         $result['attachment_id'] = wp_insert_attachment($args, $result['file'], $attach_to_post);
+        set_post_thumbnail($attach_to_post, $result['attachment_id']);
 
         $attach_data = wp_generate_attachment_metadata($result['attachment_id'], $result['file']);
         wp_update_attachment_metadata($result['attachment_id'], $attach_data);
