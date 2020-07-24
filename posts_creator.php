@@ -27,7 +27,7 @@ class BaseRSSParser
             array_push($posts, $rss_post);
         }
 
-        return $this->xmlToArray($posts);
+        return $posts;
     }
 }
 
@@ -40,8 +40,8 @@ class RSSWordPressPostsCreator extends BaseRSSParser
     private function convert_post_data($post_data)
     {
         return array(
-            'post_title' => $post_data["title"],
-            'post_content' => $post_data["description"],
+            'post_title' => $post_data -> title -> __toString(),
+            'post_content' => $post_data -> children('media', True) -> text -> __toString(),
             'post_type' => $this->post_type,
             'post_status' => 'publish',
             'post_author' => 1,
@@ -52,7 +52,7 @@ class RSSWordPressPostsCreator extends BaseRSSParser
     {
         // Not the best choice, need to be changed
         foreach ($this->posts as $post) {
-            if ($post->post_title == $new_post['title']) return false;
+            if ($post->post_title == $new_post -> title -> __toString()) return false;
         }
         return true;
     }
@@ -65,7 +65,10 @@ class RSSWordPressPostsCreator extends BaseRSSParser
     private function publish_post_if_need($rss_post)
     {
         $wp_post = $this->convert_post_data($rss_post);
-        wp_insert_post($wp_post);
+        $post_id = wp_insert_post($wp_post);
+        $content = $rss_post -> children("media", True) -> content;
+        $image_url = (string)$content -> attributes()["url"];
+        ksa_upload_from_url($image_url, $post_id );
     }
 
     public function createNewPosts()
